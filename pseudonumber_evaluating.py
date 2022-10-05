@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 
 
@@ -23,7 +25,15 @@ def dispersion(X, M):
         res += X[i] ** 2
     return (res / N - M ** 2) * N / (N - 1)
 
+
 def random_period(Y):
+    count = 0
+    for i in range(1, len(Y)):
+        count += 1
+        if Y[i] == 1:
+            return count
+
+def pirson_val(Y):
     pass
 
 
@@ -54,15 +64,16 @@ def main():
 
     M_array = np.empty(4, dtype=np.ndarray)
     D_array = np.empty(4, dtype=np.ndarray)
+    Periods = np.empty(4, dtype=np.ndarray)
 
     for i in range(4):
         M_array[i] = math_wait(Yrand_nums[i])
         D_array[i] = dispersion(Yrand_nums[i], M_array[i])
+        #Вот тут не понятно то ли считать каждый , то ли нет
+        Periods[i] = random_period(Yrand_nums[i])
+        # M = (A + B) / 2  M(0,10) = (0 + 10) / 2 = 5
+        # D = (B - A) ^ 2 / 12 D(0,10) = (0 - 10) ^ 2 / 12 = 8.(3)
 
-# M = (A + B) / 2  M(0,10) = (0 + 10) / 2 = 5
-# D = (B - A) ^ 2 / 12 D(0,10) = (0 - 10) ^ 2 / 12 = 8.(3)
-# Значит так, сюда ты пишешь функцию, которая определяет период сгенерированной последовательности случайных чисел
-    return
 
 
 if __name__ == "__main__":
