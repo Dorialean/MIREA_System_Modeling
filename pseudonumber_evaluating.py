@@ -1,7 +1,8 @@
 import math
 import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.use('TkAgg')
+
+# matplotlib.use('TkAgg')
 import numpy as np
 
 
@@ -36,10 +37,6 @@ def random_period(Y):
             return count
 
 
-def pirson_val(Y):
-    pass
-
-
 def main():
     m = 2 ** 32
     b = 1
@@ -72,13 +69,12 @@ def main():
     for i in range(4):
         M_array[i] = math_wait(Yrand_nums[i])
         D_array[i] = dispersion(Yrand_nums[i], M_array[i])
-        # Вот тут не понятно то ли считать каждый , то ли нет
         Periods[i] = random_period(Yrand_nums[i])
         # M = (A + B) / 2  M(0,10) = (0 + 10) / 2 = 5
         # D = (B - A) ^ 2 / 12 D(0,10) = (0 - 10) ^ 2 / 12 = 8.(3)
 
     for i in range(len(Yrand_nums)):
-        plt.hist(Yrand_nums[i], bins=10 ** (i + 2), density=True)
+        plt.hist(Yrand_nums[i], bins=10, density=True)
         plt.show()
 
 
