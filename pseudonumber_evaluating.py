@@ -72,24 +72,30 @@ def main():
 
     M_array = np.empty(4, dtype=np.ndarray)
     D_array = np.empty(4, dtype=np.ndarray)
-    Periods = np.empty(4, dtype=np.ndarray)
+    My_Periods = np.empty(4, dtype=np.ndarray)
+
+    Rnd_Periods = np.empty(4,dtype=np.ndarray)
+
 
     for i in range(4):
         M_array[i] = math_wait(Yrand_nums[i])
         D_array[i] = dispersion(Yrand_nums[i], M_array[i])
-        Periods[i] = random_period(Yrand_nums[i])
+        My_Periods[i] = random_period(Yrand_nums[i])
+        Rnd_Periods[i] = random_period(np.random.default_rng(12345).random(size=10 ** (i + 2)))
         # M = (A + B) / 2  M(0,10) = (0 + 10) / 2 = 5
         # D = (B - A) ^ 2 / 12 D(0,10) = (0 - 10) ^ 2 / 12 = 8.(3)
 
-    for p in Periods:
-        print(f"Период:{p}")
+    for i in range(len(My_Periods)):
+        print(f"Период своего алгоритма:{My_Periods[i]}")
+        print(f"Период встроенного генератора:{Rnd_Periods[i]}")
 
     Pirsons = np.empty(4, dtype=np.ndarray)
 
     for i in range(len(Yrand_nums)):
+        plt.title(f"Гистограмма при {i}")
         plt.hist(Yrand_nums[i], bins=10, density=True)
-        if Periods[i] is not None:
-            Pirsons[i] = pirson_func(Yrand_nums[i], Periods[i])
+        if My_Periods[i] is not None:
+            Pirsons[i] = pirson_func(Yrand_nums[i], My_Periods[i])
         plt.show()
 
     for p in Pirsons:
