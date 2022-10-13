@@ -1,7 +1,5 @@
-import math
 import matplotlib.pyplot as plt
 import matplotlib
-
 # matplotlib.use('TkAgg')
 import numpy as np
 
@@ -29,7 +27,7 @@ def dispersion(X, M):
     return (res / N - M ** 2) * N / (N - 1)
 
 
-def random_period(Y : np.ndarray):
+def random_period(Y: np.ndarray):
     count = 0
     for i in range(1, len(Y)):
         count += 1
@@ -74,13 +72,15 @@ def main():
     D_array = np.empty(4, dtype=np.ndarray)
     My_Periods = np.empty(4, dtype=np.ndarray)
 
-    Rnd_Periods = np.empty(4,dtype=np.ndarray)
-
+    Rnd_Periods = np.empty(4, dtype=np.ndarray)
 
     for i in range(4):
         M_array[i] = math_wait(Yrand_nums[i])
+        print(f"Математическое ожидание {i + 1}:{M_array[i]}")
         D_array[i] = dispersion(Yrand_nums[i], M_array[i])
+        print(f"Дисперсия {i + 1}:{D_array[i]}")
         My_Periods[i] = random_period(Yrand_nums[i])
+
         Rnd_Periods[i] = random_period(np.random.default_rng(12345).random(size=10 ** (i + 2)))
         # M = (A + B) / 2  M(0,10) = (0 + 10) / 2 = 5
         # D = (B - A) ^ 2 / 12 D(0,10) = (0 - 10) ^ 2 / 12 = 8.(3)
