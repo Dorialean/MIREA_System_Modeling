@@ -29,12 +29,20 @@ def dispersion(X, M):
     return (res / N - M ** 2) * N / (N - 1)
 
 
-def random_period(Y):
+def random_period(Y : np.ndarray):
     count = 0
     for i in range(1, len(Y)):
         count += 1
-        if math.floor(Y[i]) == math.floor(Y[0]):
+        if f"{Y[i]:.3f}" == f"{Y[0]:.3f}":
             return count
+
+
+def pirson_func(Y, np):
+    criterii = 0.0
+    for j in range(len(Y)):
+        n = Y[j] / np
+        criterii += (n - np) ** 2 / np
+    return criterii
 
 
 def main():
@@ -73,9 +81,19 @@ def main():
         # M = (A + B) / 2  M(0,10) = (0 + 10) / 2 = 5
         # D = (B - A) ^ 2 / 12 D(0,10) = (0 - 10) ^ 2 / 12 = 8.(3)
 
+    for p in Periods:
+        print(f"Период:{p}")
+
+    Pirsons = np.empty(4, dtype=np.ndarray)
+
     for i in range(len(Yrand_nums)):
         plt.hist(Yrand_nums[i], bins=10, density=True)
+        if Periods[i] is not None:
+            Pirsons[i] = pirson_func(Yrand_nums[i], Periods[i])
         plt.show()
+
+    for p in Pirsons:
+        print(f"Значение пирсона:{p}")
 
 
 if __name__ == "__main__":
