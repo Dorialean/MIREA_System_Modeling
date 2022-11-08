@@ -103,7 +103,7 @@ def main():
     plt.ylabel("Y")
     plt.show()
 
-    #Здесь что-то не так т.к. таблица в итоге содержит одинаковые значения
+    #TODO: Здесь что-то не так т.к. таблица в итоге содержит одинаковые значения
     plt.plot(get_table_f(min(X), max(X), rapsredelenie_plotnosti_veroyatnosti_normalni_zakon, 100).keys(),
              get_table_f(min(X), max(X), rapsredelenie_plotnosti_veroyatnosti_normalni_zakon, 100).values())
     plt.title("Кусочно линейная функция при n = 100")
