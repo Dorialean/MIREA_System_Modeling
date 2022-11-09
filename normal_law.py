@@ -7,9 +7,95 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+class ZigguratAlgorithm:
+    def __init__(self, sample, regions, nbins, mu, sigma, max_i=10):
+        self.sample = sample
+        self.regions = regions
+        self.nbins = nbins
+        self.max_i = max_i
+
+        self.mu = mu
+        self.sigma = sigma
+
+    def ziggurat(self):
+
+        X_0 = 0
+        limit = 20
+        rectangle_size = 1 / (self.regions)
+        X = np.array([])
+        dX = 0.01
+        current_x = X_0
+        current_area, rectangle_length = 0, 0
+        Z = np.ones(self.sample)
+
+        while current_x < limit:
+            rectangle_length = rectangle_length + dX
+            current_area = (
+                                   (1 / np.sqrt(2 * np.pi)) * np.exp(-0.5 * (current_x ** 2))
+                                   - (1 / np.sqrt(2 * np.pi)) * np.exp(-0.5 * (rectangle_length ** 2))
+                           ) * rectangle_length
+
+            if current_area > rectangle_size:
+                X = np.append(X, rectangle_length)
+                current_x = rectangle_length
+
+        Y = 1 / np.sqrt(2 * np.pi) * np.exp(-0.5 * (X ** 2))
+
+        for j in range(self.sample):
+            num = 0
+            while (Z[j] == 1) and num < self.max_i:
+                i = np.random.randint(0, len(X))
+                u0 = np.random.uniform(-1, 1)
+                u1 = np.random.uniform(0, 1)
+                x = u0 * X[i]
+                if abs(x) < X[i - 1]:
+                    Z[j] = x
+                else:
+                    y = Y[i] + u1 * (Y[i - 1] - Y[i])
+                    point = 1 / np.sqrt(2 * np.pi) * np.exp(-0.5 * (x ** 2))
+                    if y < point:
+                        Z[j] = x
+                num = num + 1
+
+        return Z
+
+    def plot_matplotlib(self):
+        data = self.ziggurat()
+        data = data * self.sigma + self.mu
+        plt.hist(data, bins=self.nbins, density=True)
+        plt.grid(True)
+
+        plt.title("Probability Density Function")
+
+    def plot_matplotlib_in_range(self, start, end):
+        data = self.ziggurat()
+        data = data * self.sigma + self.mu
+        plt.hist(data, bins=self.nbins, density=True)
+        plt.grid(True)
+        plt.xlim(start, end)
+        plt.title("Probability Density Function")
+
+
+def plot_normal_distribution(mu, sigma):
+    x = np.linspace(mu - 3 * sigma, mu + 3 * sigma, 100)
+    plt.plot(
+        x,
+        1 / (sigma * np.sqrt(2 * np.pi)) * np.exp(-((x - mu) ** 2) / (2 * sigma ** 2)),
+        linewidth=2,
+        label=f"{mu = }; {sigma = }",
+    )
+    plt.grid(True)
+    plt.legend()
+    plt.title("Normal Distribution")
+
+
 def raspredelenie_normalnogo_zakona(f, x):
     Fx = integrate.quad(f, -math.inf, x)
     return Fx
+
+
+def root_mean_square_deviation(data, mu):
+    return np.sqrt(np.sum((data - mu) ** 2) / len(data))
 
 
 def rapsredelenie_plotnosti_veroyatnosti_normalni_zakon(x):
@@ -85,42 +171,42 @@ def main():
         for i in range(len(X)):
             y.append(rapsredelenie_plotnosti_veroyatnosti(X[i], sigma, M))
 
-        plt.plot(X, y)
+        plt.plot(X, y, linewidth=2, label=f'Мат ожидание={M}, Сигма = {sigma}')
     plt.title("Распределение плотности вероятности")
     plt.xlabel("X")
     plt.ylabel("Y")
+    plt.grid(True)
+    plt.legend()
     plt.show()
 
-    for y in Y:
-        M = 10
-        sigma = 2
-        y.clear()
-        for i in range(len(X)):
-            y.append(raspredelenie_normalnogo_zakona(rapsredelenie_plotnosti_veroyatnosti_normalni_zakon, X[i]))
-        plt.plot(X, y)
-    plt.title("Распределение плотности вероятности для нормального закона")
-    plt.xlabel("X")
-    plt.ylabel("Y")
-    plt.show()
+    N = [10 ** 3, 10 ** 4, 10 ** 5, 10 ** 6]
 
-    #TODO: Здесь что-то не так т.к. таблица в итоге содержит одинаковые значения
-    plt.plot(get_table_f(min(X), max(X), rapsredelenie_plotnosti_veroyatnosti_normalni_zakon, 100).keys(),
-             get_table_f(min(X), max(X), rapsredelenie_plotnosti_veroyatnosti_normalni_zakon, 100).values())
-    plt.title("Кусочно линейная функция при n = 100")
-    plt.show()
+    for i in range(len(N)):
+        mu, sigma = 10, 2
 
-    models = []
-    N = []
-    for i in range(3, 7):
-        n = 10 ** i
-        N.append(n)
-        p = random.random()
-        models.append(model_n(p, get_table_f(min(X), max(X), rapsredelenie_plotnosti_veroyatnosti_normalni_zakon, n)))
-        plt.plot(p, models[i - 3])
-        plt.title(f"График кусочно-линейной аппроксимации функции распределения при n = {n}")
+        z = ZigguratAlgorithm(N[i], regions=100, nbins=100, mu=mu, sigma=sigma)
+        z.plot_matplotlib()
+        plot_normal_distribution(mu, sigma)
+        print(f"N = {N[i]:.0e}")
         plt.show()
 
-    plt.hist(N, models, bins=100)
+    N = [10 ** 2, 10 ** 3, 10 ** 4, 10 ** 5]
+
+    rmsd = []
+    for i in range(len(N)):
+        mu, sigma = 10, 2
+
+        z = ZigguratAlgorithm(N[i], regions=100, nbins=100, mu=mu, sigma=sigma)
+        data = z.ziggurat()
+        data = data * sigma + mu
+
+        rmsd.append(root_mean_square_deviation(data, mu))
+        print(f'N = {N[i]}, RMSD = {rmsd[-1]}')
+
+    plt.plot(N, rmsd)
+    plt.grid(True)
+    plt.title("RMSD")
+    plt.show()
 
 
 if __name__ == '__main__':
