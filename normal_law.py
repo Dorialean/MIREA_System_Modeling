@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-class ZigguratAlgorithm:
+class Ziggurat:
     def __init__(self, sample, regions, nbins, mu, sigma, max_i=10):
         self.sample = sample
         self.regions = regions
@@ -65,7 +65,7 @@ class ZigguratAlgorithm:
         plt.hist(data, bins=self.nbins, density=True)
         plt.grid(True)
 
-        plt.title("Probability Density Function")
+        plt.title("Функция плотности вероятности")
 
     def plot_matplotlib_in_range(self, start, end):
         data = self.ziggurat()
@@ -73,7 +73,7 @@ class ZigguratAlgorithm:
         plt.hist(data, bins=self.nbins, density=True)
         plt.grid(True)
         plt.xlim(start, end)
-        plt.title("Probability Density Function")
+        plt.title("Функция плотности вероятности")
 
 
 def plot_normal_distribution(mu, sigma):
@@ -86,7 +86,7 @@ def plot_normal_distribution(mu, sigma):
     )
     plt.grid(True)
     plt.legend()
-    plt.title("Normal Distribution")
+    plt.title("Нормальное распределение")
 
 
 def raspredelenie_normalnogo_zakona(f, x):
@@ -134,19 +134,6 @@ def get_table_f(fmin, fmax, f, segments_amount):
     return table_x_to_y
 
 
-def model_n(p, table_x_to_y):
-    y = 0
-    if 0 >= p >= 1:
-        raise Exception("wrong p")
-    for curr_x in table_x_to_y.keys():
-        if curr_x == 1:
-            continue
-        prev_y = table_x_to_y[curr_x - 1]
-        y += ((p - table_x_to_y[curr_x]) / (prev_y - table_x_to_y[curr_x]) * (curr_x - 1)) + (
-                (p - prev_y) / (table_x_to_y[curr_x] - prev_y)) * curr_x
-    return y
-
-
 def main():
     X = range(0, 21, 2)
     y1 = []
@@ -184,28 +171,28 @@ def main():
     for i in range(len(N)):
         mu, sigma = 10, 2
 
-        z = ZigguratAlgorithm(N[i], regions=100, nbins=100, mu=mu, sigma=sigma)
+        z = Ziggurat(N[i], regions=100, nbins=100, mu=mu, sigma=sigma)
         z.plot_matplotlib()
         plot_normal_distribution(mu, sigma)
         print(f"N = {N[i]:.0e}")
         plt.show()
 
-    N = [10 ** 2, 10 ** 3, 10 ** 4, 10 ** 5]
+    N = [10 ** 3, 10 ** 4, 10 ** 5, 10 ** 6]
 
     rmsd = []
     for i in range(len(N)):
         mu, sigma = 10, 2
 
-        z = ZigguratAlgorithm(N[i], regions=100, nbins=100, mu=mu, sigma=sigma)
+        z = Ziggurat(N[i], regions=100, nbins=100, mu=mu, sigma=sigma)
         data = z.ziggurat()
         data = data * sigma + mu
 
         rmsd.append(root_mean_square_deviation(data, mu))
-        print(f'N = {N[i]}, RMSD = {rmsd[-1]}')
+        print(f'N = {N[i]}, среднеквадратичное отклонение = {rmsd[-1]}')
 
     plt.plot(N, rmsd)
     plt.grid(True)
-    plt.title("RMSD")
+    plt.title("среднеквадратичное отклонение")
     plt.show()
 
 
