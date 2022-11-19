@@ -1,3 +1,5 @@
+import math
+from random import random
 import numpy as np
 
 
@@ -7,12 +9,11 @@ def multiplicating_rand_method(a, b, m, x):
 
 def get_tc(TZ):
     max_time = 3584
-    TC = np.zeros(len(TZ))
-    TC[0] = TZ[0]
-    j = 1
-    while TC[j - 1] < max_time:
-        TC[j] = TC[j - 1] + TZ[j]
-        j += 1
+    TC = [TZ[0]]
+    i = 1
+    while TC[i - 1] < max_time:
+        TC.insert(i, TC[i - 1] + TZ[i])
+        i += 1
     return TC
 
 
@@ -49,7 +50,6 @@ def main():
         p.append(x / M)
         x = multiplicating_rand_method(a, b, M, x)
 
-    p = np.array(p)
     TZ = np.zeros(len(p), dtype=np.ndarray)
     TS = np.zeros(len(p), dtype=np.ndarray)
 
@@ -72,8 +72,29 @@ def main():
     for i in range(5):
         Times[i] = get_buffer_time(Tc, TS, i + 1)
         P[i] = Times[i] / 3600
-        print(f'time{i+1} : {Times[i]}')
-        print(f'P{i+1}: {P[i]}')
+        print(f'time{i + 1} : {Times[i]}')
+        print(f'P{i + 1}: {P[i]}')
+
+    lamb = 1/3
+    mu = 1/4
+
+    Tz = []
+    Ts = []
+    for i in range(2001):
+        Tz.insert(i, -math.log(random()) / lamb)
+        Tz.insert(i, -math.log(random()) / mu)
+
+    print(f'Максимальное TZ сгенерированным встроенным генератором : {max(Tz)}')
+    print(f'Максимальное TS сгенерированным встроенным генератором: {max(Tz)}')
+
+    Tc = get_tc(Tz)
+    P = np.zeros(5, dtype=np.ndarray)
+    Times = np.zeros(5, dtype=np.ndarray)
+    for i in range(5):
+        Times[i] = get_buffer_time(Tc, TS, i + 1)
+        P[i] = Times[i] / 3600
+        print(f'time with rnd{i + 1} : {Times[i]}')
+        print(f'P with rnd{i + 1}: {P[i]}')
 
 
 if __name__ == "__main__":
