@@ -177,6 +177,14 @@ def main():
         print(f"N = {N[i]:.0e}")
         plt.show()
 
+
+    res = []
+    for x in X:
+        res.append(raspredelenie_normalnogo_zakona(rapsredelenie_plotnosti_veroyatnosti_normalni_zakon, x))
+    plt.plot(res)
+    plt.title("Обратная функция")
+    plt.show()
+
     N = [10 ** 3, 10 ** 4, 10 ** 5, 10 ** 6]
 
     rmsd = []
@@ -190,11 +198,14 @@ def main():
         rmsd.append(root_mean_square_deviation(data, mu))
         print(f'N = {N[i]}, среднеквадратичное отклонение = {rmsd[-1]}')
 
-    plt.plot(N, rmsd)
+    plt.plot(rmsd, N)
     plt.grid(True)
     plt.title("среднеквадратичное отклонение")
     plt.show()
 
 
+
 if __name__ == '__main__':
     main()
+
+
