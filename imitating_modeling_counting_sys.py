@@ -85,7 +85,7 @@ def main():
         Tz.insert(i, -math.log(random()) / mu)
 
     print(f'Максимальное TZ сгенерированным встроенным генератором : {max(Tz)}')
-    print(f'Максимальное TS сгенерированным встроенным генератором: {max(Tz)}')
+    #print(f'Максимальное TS сгенерированным встроенным генератором: {max(Ts)}')
 
     Tc = get_tc(Tz)
     P = np.zeros(5, dtype=np.ndarray)
